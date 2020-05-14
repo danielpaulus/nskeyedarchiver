@@ -24,4 +24,4 @@ func createArchiveFiles(objects: [NSObject], filename: String) {
     }
 }
 
-createArchiveFiles(objects: [NSNumber(booleanLiteral: true)], filename: "../fixtures/boolean")
+createArchiveFiles(objects: [NSNumber(booleanLiteral: true)], filename: "../archiver/fixtures/boolean")
