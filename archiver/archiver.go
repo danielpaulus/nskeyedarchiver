@@ -11,3 +11,10 @@ func ArchiveXML([]NSKeyedObject) string {
 func ArchiveBin([]NSKeyedObject) []byte {
 	return make([]byte, 0)
 }
+
+func UnarchiveXML(xml string) []NSKeyedObject {
+	return nil
+}
+func UnarchiveBin(data []byte) []NSKeyedObject {
+	return nil
+}

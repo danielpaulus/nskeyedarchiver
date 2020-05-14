@@ -12,9 +12,9 @@ import (
 func TestDecoder(t *testing.T) {
 	testCases := map[string]struct {
 		filename string
-		encode   []archiver.NSKeyedObject
+		expected []interface{}
 	}{
-		"simple boolean": {"boolean", []archiver.NSKeyedObject{}},
+		"simple boolean": {"boolean", []interface{}{true}},
 	}
 
 	for _, tc := range testCases {
@@ -22,12 +22,12 @@ func TestDecoder(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		assert.Equal(t, string(dat), archiver.ArchiveXML(tc.encode))
+		assert.Equal(t, tc.expected, archiver.UnarchiveXML(string(dat)))
 
 		dat, err = ioutil.ReadFile("fixtures/" + tc.filename + ".bin")
 		if err != nil {
 			log.Fatal(err)
 		}
-		assert.Equal(t, dat, archiver.ArchiveXML(tc.encode))
+		assert.Equal(t, tc.expected, archiver.UnarchiveBin(dat))
 	}
 }
