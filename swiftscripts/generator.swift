@@ -2,11 +2,10 @@ import AppKit
 
 let randomFilename = UUID().uuidString
 let fullPath = URL(fileURLWithPath: "daniel")
-//print(fullPath)
+// print(fullPath)
 do {
-    
-    let archiver = NSKeyedArchiver.init(requiringSecureCoding: false)
-    
+    let archiver = NSKeyedArchiver(requiringSecureCoding: false)
+
     archiver.outputFormat = .xml
     archiver.encode("test")
     archiver.finishEncoding()
@@ -18,9 +17,8 @@ do {
     print("Couldn't write file")
 }
 
-
 /*
- 
+
  do {
      if let loadedStrings = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? [String] {
          savedArray = loadedStrings
@@ -29,4 +27,3 @@ do {
      print("Couldn't read file.")
  }
  **/
-
