@@ -45,6 +45,7 @@ func TestValidation(t *testing.T) {
 		"$objects key is missing":          {"missing_objects"},
 		"$version key is missing":          {"missing_version"},
 		"$version is wrong":                {"wrong_version"},
+		"plist is invalid":                 {"broken_plist"},
 	}
 
 	for _, tc := range testCases {
