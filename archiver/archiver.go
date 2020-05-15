@@ -29,7 +29,7 @@ func ArchiveBin([]NSKeyedObject) []byte {
 	return make([]byte, 0)
 }
 
-func UnarchiveXML(xml []byte) ([]NSKeyedObject, error) {
+func Unarchive(xml []byte) ([]NSKeyedObject, error) {
 	plist, err := plistFromBytes(xml)
 	if err != nil {
 		return nil, err
@@ -69,10 +69,6 @@ func verifyCorrectArchiver(nsKeyedArchiverData map[string]interface{}) error {
 		}
 	}
 
-	return nil
-}
-
-func UnarchiveBin(data []byte) []NSKeyedObject {
 	return nil
 }
 

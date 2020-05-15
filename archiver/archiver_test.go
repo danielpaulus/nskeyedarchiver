@@ -22,7 +22,7 @@ func TestDecoder(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		objects, err := archiver.UnarchiveXML(dat)
+		objects, err := archiver.Unarchive(dat)
 		assert.NoError(t, err)
 		assert.Equal(t, tc.expected, objects)
 
@@ -30,7 +30,8 @@ func TestDecoder(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		assert.Equal(t, tc.expected, archiver.UnarchiveBin(dat))
+		objects, err = archiver.Unarchive(dat)
+		assert.Equal(t, tc.expected, objects)
 	}
 }
 
@@ -53,7 +54,7 @@ func TestValidation(t *testing.T) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, err = archiver.UnarchiveXML(dat)
+		_, err = archiver.Unarchive(dat)
 		assert.Error(t, err)
 	}
 }

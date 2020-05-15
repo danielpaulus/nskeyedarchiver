@@ -1,5 +1,5 @@
 import AppKit
-func createArchiveFiles(objects: [NSObject], filename: String) {
+func createArchiveFiles(objects: NSArray, filename: String) {
     do {
         let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         archiver.outputFormat = .xml
@@ -7,7 +7,7 @@ func createArchiveFiles(objects: [NSObject], filename: String) {
             archiver.encode(object)
         }
         archiver.finishEncoding()
-        let archivedXML = String(bytes: archiver.encodedData, encoding: .ascii)!
+        //let archivedXML = String(bytes: archiver.encodedData, encoding: .ascii)!
 
         let bin_archiver = NSKeyedArchiver(requiringSecureCoding: false)
         for object in objects {
@@ -25,3 +25,4 @@ func createArchiveFiles(objects: [NSObject], filename: String) {
 }
 
 createArchiveFiles(objects: [NSNumber(booleanLiteral: true)], filename: "../archiver/fixtures/boolean")
+createArchiveFiles(objects: [NSNumber(booleanLiteral: true),2,3, "test", "test"], filename: "../archiver/fixtures/test")
