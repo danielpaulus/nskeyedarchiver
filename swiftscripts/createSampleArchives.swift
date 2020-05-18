@@ -33,8 +33,8 @@ let nestedNsset: NSArray = [nsset, mutableSet]
 
 let dict: NSDictionary = ["int": 1, "string": "string", "array": mutableArray]
 
-createArchiveFiles(objects: primitives, filename: "../archiver/fixtures/primitives")
-createArchiveFiles(objects: [primitives, mutableArray, nsset, mutableSet], filename: "../archiver/fixtures/arrays")
-createArchiveFiles(objects: [true], filename: "../archiver/fixtures/onevalue")
-createArchiveFiles(objects: [nestedNsset], filename: "../archiver/fixtures/nestedarrays")
-createArchiveFiles(objects: [dict], filename: "../archiver/fixtures/dict")
+createArchiveFiles(objects: primitives, filename: "../fixtures/primitives")
+createArchiveFiles(objects: [primitives, mutableArray, nsset, mutableSet], filename: "../fixtures/arrays")
+createArchiveFiles(objects: [true], filename: "../fixtures/onevalue")
+createArchiveFiles(objects: [nestedNsset], filename: "../fixtures/nestedarrays")
+createArchiveFiles(objects: [dict], filename: "../fixtures/dict")
