@@ -16,7 +16,10 @@ func TestDecoder(t *testing.T) {
 		filename string
 		expected string
 	}{
-		"test all primitives": {"primitives", "[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42]"},
+		"test one value":       {"onevalue", "[true]"},
+		"test all primitives":  {"primitives", "[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42]"},
+		"test arrays and sets": {"arrays", "[[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42],[true,\"Hello, World!\",42],[true],[42,true,\"Hello, World!\"]]"},
+		"test nested arrays":   {"nestedarrays", "[[true],[42,true,\"Hello, World!\"]]"},
 	}
 
 	for _, tc := range testCases {

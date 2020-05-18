@@ -4,18 +4,29 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 
 	plist "howett.net/plist"
 )
 
 const (
-	archiverKey   = "$archiver"
-	archiverValue = "NSKeyedArchiver"
-	versionKey    = "$version"
-	topKey        = "$top"
-	objectsKey    = "$objects"
-	versionValue  = 100000
+	archiverKey     = "$archiver"
+	nsKeyedArchiver = "NSKeyedArchiver"
+	versionKey      = "$version"
+	topKey          = "$top"
+	objectsKey      = "$objects"
+	nsObjects       = "NS.objects"
+	class           = "$class"
+	className       = "$classname"
+	versionValue    = 100000
+)
+
+const (
+	nsArray        = "NSArray"
+	nsMutableArray = "NSMutableArray"
+	nsSet          = "NSSet"
+	nsMutableSet   = "NSMutableSet"
 )
 
 type NSKeyedObject struct {
@@ -41,23 +52,72 @@ func Unarchive(xml []byte) ([]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	return extractObjects(nsKeyedArchiverData[topKey].(map[string]interface{}), nsKeyedArchiverData[objectsKey].([]interface{}))
+	return extractObjectsFromTop(nsKeyedArchiverData[topKey].(map[string]interface{}), nsKeyedArchiverData[objectsKey].([]interface{}))
 
 }
 
-func extractObjects(top map[string]interface{}, objects []interface{}) ([]interface{}, error) {
+func extractObjectsFromTop(top map[string]interface{}, objects []interface{}) ([]interface{}, error) {
 	objectCount := len(top)
-	returnValue := make([]interface{}, objectCount)
+	objectRefs := make([]plist.UID, objectCount)
 	for i := 0; i < objectCount; i++ {
 		objectIndex := top[fmt.Sprintf("$%d", i)].(plist.UID)
+		objectRefs[i] = objectIndex
+	}
+	return extractObjects(objectRefs, objects)
+}
+
+func extractObjects(objectRefs []plist.UID, objects []interface{}) ([]interface{}, error) {
+	objectCount := len(objectRefs)
+	returnValue := make([]interface{}, objectCount)
+	for i := 0; i < objectCount; i++ {
+		objectIndex := objectRefs[i]
 		objectRef := objects[objectIndex]
 		if object, ok := isPrimitiveObject(objectRef); ok {
 			returnValue[i] = object
+			continue
 		}
+		if object, ok := isArrayObject(objectRef.(map[string]interface{}), objects); ok {
+			extractObjects, err := extractObjects(toUidList(object[nsObjects].([]interface{})), objects)
+			if err != nil {
+				return nil, err
+			}
+			returnValue[i] = extractObjects
+			continue
+		}
+		log.Fatal("Unknown type")
 		printAsJSON(reflect.TypeOf(objectRef).String())
 		//printAsJSON()
 	}
 	return returnValue, nil
+}
+
+func toUidList(list []interface{}) []plist.UID {
+	l := len(list)
+	result := make([]plist.UID, l)
+	for i := 0; i < l; i++ {
+		result[i] = list[i].(plist.UID)
+	}
+	return result
+}
+
+func isArrayObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
+	className, err := resolveClass(object[class], objects)
+	if err != nil {
+		return nil, false
+	}
+	if className == nsArray || className == nsMutableArray || className == nsSet || className == nsMutableSet {
+		return object, true
+	}
+	return object, false
+}
+
+func resolveClass(classInfo interface{}, objects []interface{}) (string, error) {
+	printAsJSON(reflect.TypeOf(classInfo).String())
+	if v, ok := classInfo.(plist.UID); ok {
+		classDict := objects[v].(map[string]interface{})
+		return classDict[className].(string), nil
+	}
+	return "", fmt.Errorf("Could not find class for %s", classInfo)
 }
 
 func isPrimitiveObject(object interface{}) (interface{}, bool) {
@@ -83,8 +143,8 @@ func verifyCorrectArchiver(nsKeyedArchiverData map[string]interface{}) error {
 	if val, ok := nsKeyedArchiverData[archiverKey]; !ok {
 		return fmt.Errorf("Invalid NSKeyedAchiverObject, missing key '%s'", archiverKey)
 	} else {
-		if stringValue := val.(string); stringValue != archiverValue {
-			return fmt.Errorf("Invalid value: %s for key '%s', expected: '%s'", stringValue, archiverKey, archiverValue)
+		if stringValue := val.(string); stringValue != nsKeyedArchiver {
+			return fmt.Errorf("Invalid value: %s for key '%s', expected: '%s'", stringValue, archiverKey, nsKeyedArchiver)
 		}
 	}
 	if _, ok := nsKeyedArchiverData[topKey]; !ok {
