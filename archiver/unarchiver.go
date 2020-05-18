@@ -29,6 +29,7 @@ func Unarchive(xml []byte) ([]interface{}, error) {
 func extractObjectsFromTop(top map[string]interface{}, objects []interface{}) ([]interface{}, error) {
 	objectCount := len(top)
 	objectRefs := make([]plist.UID, objectCount)
+	//convert the Dictionary with the objectReferences into a flat list of UIDs, so we can reuse the extractObjects function later
 	for i := 0; i < objectCount; i++ {
 		objectIndex := top[fmt.Sprintf("$%d", i)].(plist.UID)
 		objectRefs[i] = objectIndex
@@ -71,6 +72,28 @@ func extractObjects(objectRefs []plist.UID, objects []interface{}) ([]interface{
 	return returnValue, nil
 }
 
+func isArrayObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
+	className, err := resolveClass(object[class], objects)
+	if err != nil {
+		return nil, false
+	}
+	if className == nsArray || className == nsMutableArray || className == nsSet || className == nsMutableSet {
+		return object, true
+	}
+	return object, false
+}
+
+func isDictionaryObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
+	className, err := resolveClass(object[class], objects)
+	if err != nil {
+		return nil, false
+	}
+	if className == nsDictionary || className == nsMutableDictionary {
+		return object, true
+	}
+	return object, false
+}
+
 func extractDictionary(object map[string]interface{}, objects []interface{}) (map[string]interface{}, error) {
 	keyRefs := toUidList(object[nsKeys].([]interface{}))
 	keys, err := extractObjects(keyRefs, objects)
@@ -90,28 +113,6 @@ func extractDictionary(object map[string]interface{}, objects []interface{}) (ma
 	}
 
 	return result, nil
-}
-
-func isDictionaryObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
-	className, err := resolveClass(object[class], objects)
-	if err != nil {
-		return nil, false
-	}
-	if className == nsDictionary || className == nsMutableDictionary {
-		return object, true
-	}
-	return object, false
-}
-
-func isArrayObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
-	className, err := resolveClass(object[class], objects)
-	if err != nil {
-		return nil, false
-	}
-	if className == nsArray || className == nsMutableArray || className == nsSet || className == nsMutableSet {
-		return object, true
-	}
-	return object, false
 }
 
 func resolveClass(classInfo interface{}, objects []interface{}) (string, error) {
