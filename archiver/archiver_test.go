@@ -1,6 +1,8 @@
 package archiver_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"testing"
@@ -12,9 +14,9 @@ import (
 func TestDecoder(t *testing.T) {
 	testCases := map[string]struct {
 		filename string
-		expected []interface{}
+		expected string
 	}{
-		"simple boolean": {"boolean", []interface{}{true}},
+		"test all primitives": {"primitives", "[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42]"},
 	}
 
 	for _, tc := range testCases {
@@ -24,14 +26,14 @@ func TestDecoder(t *testing.T) {
 		}
 		objects, err := archiver.Unarchive(dat)
 		assert.NoError(t, err)
-		assert.Equal(t, tc.expected, objects)
+		assert.Equal(t, tc.expected, convertToJSON(objects))
 
 		dat, err = ioutil.ReadFile("fixtures/" + tc.filename + ".bin")
 		if err != nil {
 			log.Fatal(err)
 		}
 		objects, err = archiver.Unarchive(dat)
-		assert.Equal(t, tc.expected, objects)
+		assert.Equal(t, tc.expected, convertToJSON(objects))
 	}
 }
 
@@ -57,4 +59,12 @@ func TestValidation(t *testing.T) {
 		_, err = archiver.Unarchive(dat)
 		assert.Error(t, err)
 	}
+}
+
+func convertToJSON(obj interface{}) string {
+	b, err := json.Marshal(obj)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	return string(b)
 }

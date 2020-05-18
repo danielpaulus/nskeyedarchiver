@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	plist "howett.net/plist"
 )
@@ -29,7 +30,7 @@ func ArchiveBin([]NSKeyedObject) []byte {
 	return make([]byte, 0)
 }
 
-func Unarchive(xml []byte) ([]NSKeyedObject, error) {
+func Unarchive(xml []byte) ([]interface{}, error) {
 	plist, err := plistFromBytes(xml)
 	if err != nil {
 		return nil, err
@@ -40,12 +41,45 @@ func Unarchive(xml []byte) ([]NSKeyedObject, error) {
 	if err != nil {
 		return nil, err
 	}
+	return extractObjects(nsKeyedArchiverData[topKey].(map[string]interface{}), nsKeyedArchiverData[objectsKey].([]interface{}))
 
-	return nil, nil
+}
+
+func extractObjects(top map[string]interface{}, objects []interface{}) ([]interface{}, error) {
+	objectCount := len(top)
+	returnValue := make([]interface{}, objectCount)
+	for i := 0; i < objectCount; i++ {
+		objectIndex := top[fmt.Sprintf("$%d", i)].(plist.UID)
+		objectRef := objects[objectIndex]
+		if object, ok := isPrimitiveObject(objectRef); ok {
+			returnValue[i] = object
+		}
+		printAsJSON(reflect.TypeOf(objectRef).String())
+		//printAsJSON()
+	}
+	return returnValue, nil
+}
+
+func isPrimitiveObject(object interface{}) (interface{}, bool) {
+	if v, ok := object.(uint64); ok {
+		return v, ok
+	}
+	if v, ok := object.(float64); ok {
+		return v, ok
+	}
+	if v, ok := object.(bool); ok {
+		return v, ok
+	}
+	if v, ok := object.(string); ok {
+		return v, ok
+	}
+	if v, ok := object.([]uint8); ok {
+		return v, ok
+	}
+	return object, false
 }
 
 func verifyCorrectArchiver(nsKeyedArchiverData map[string]interface{}) error {
-	printAsJSON(nsKeyedArchiverData)
 	if val, ok := nsKeyedArchiverData[archiverKey]; !ok {
 		return fmt.Errorf("Invalid NSKeyedAchiverObject, missing key '%s'", archiverKey)
 	} else {

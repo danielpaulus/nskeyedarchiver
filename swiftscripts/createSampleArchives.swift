@@ -7,7 +7,7 @@ func createArchiveFiles(objects: NSArray, filename: String) {
             archiver.encode(object)
         }
         archiver.finishEncoding()
-        //let archivedXML = String(bytes: archiver.encodedData, encoding: .ascii)!
+        // let archivedXML = String(bytes: archiver.encodedData, encoding: .ascii)!
 
         let bin_archiver = NSKeyedArchiver(requiringSecureCoding: false)
         for object in objects {
@@ -24,5 +24,7 @@ func createArchiveFiles(objects: NSArray, filename: String) {
     }
 }
 
-createArchiveFiles(objects: [NSNumber(booleanLiteral: true)], filename: "../archiver/fixtures/boolean")
-createArchiveFiles(objects: [NSNumber(booleanLiteral: true),2,3, "test", "test"], filename: "../archiver/fixtures/test")
+// createArchiveFiles(objects: [NSNumber(booleanLiteral: true)], filename: "../archiver/fixtures/primitives")
+// createArchiveFiles(objects: [NSNumber(booleanLiteral: true),2,3, "test", "test", false, 3.4], filename: "../archiver/fixtures/primitives")
+createArchiveFiles(objects: [UInt64(1), UInt32(1), Double(1.0), 1.5, Data(base64Encoded: "YXNkZmFzZGZhZHNmYWRzZg==")!, true,
+                             "Hello, World!", "Hello, World!", "Hello, World!", false, false, 42], filename: "../archiver/fixtures/primitives")
