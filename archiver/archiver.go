@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 
 	plist "howett.net/plist"
@@ -17,6 +16,7 @@ const (
 	topKey          = "$top"
 	objectsKey      = "$objects"
 	nsObjects       = "NS.objects"
+	nsKeys          = "NS.keys"
 	class           = "$class"
 	className       = "$classname"
 	versionValue    = 100000
@@ -27,6 +27,11 @@ const (
 	nsMutableArray = "NSMutableArray"
 	nsSet          = "NSSet"
 	nsMutableSet   = "NSMutableSet"
+)
+
+const (
+	nsDictionary        = "NSDictionary"
+	nsMutableDictionary = "NSMutableDictionary"
 )
 
 type NSKeyedObject struct {
@@ -84,11 +89,42 @@ func extractObjects(objectRefs []plist.UID, objects []interface{}) ([]interface{
 			returnValue[i] = extractObjects
 			continue
 		}
-		log.Fatal("Unknown type")
-		printAsJSON(reflect.TypeOf(objectRef).String())
-		//printAsJSON()
+
+		if object, ok := isDictionaryObject(objectRef.(map[string]interface{}), objects); ok {
+			dictionary, err := extractDictionary(object, objects)
+			if err != nil {
+				return nil, err
+			}
+			returnValue[i] = dictionary
+			continue
+		}
+
+		objectType := reflect.TypeOf(objectRef).String()
+		return nil, fmt.Errorf("Unknown object type:%s", objectType)
+
 	}
 	return returnValue, nil
+}
+
+func extractDictionary(object map[string]interface{}, objects []interface{}) (map[string]interface{}, error) {
+	keyRefs := toUidList(object[nsKeys].([]interface{}))
+	keys, err := extractObjects(keyRefs, objects)
+	if err != nil {
+		return nil, err
+	}
+
+	valueRefs := toUidList(object[nsObjects].([]interface{}))
+	values, err := extractObjects(valueRefs, objects)
+	if err != nil {
+		return nil, err
+	}
+	mapSize := len(keys)
+	result := make(map[string]interface{}, mapSize)
+	for i := 0; i < mapSize; i++ {
+		result[keys[i].(string)] = values[i]
+	}
+
+	return result, nil
 }
 
 func toUidList(list []interface{}) []plist.UID {
@@ -98,6 +134,17 @@ func toUidList(list []interface{}) []plist.UID {
 		result[i] = list[i].(plist.UID)
 	}
 	return result
+}
+
+func isDictionaryObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {
+	className, err := resolveClass(object[class], objects)
+	if err != nil {
+		return nil, false
+	}
+	if className == nsDictionary || className == nsMutableDictionary {
+		return object, true
+	}
+	return object, false
 }
 
 func isArrayObject(object map[string]interface{}, objects []interface{}) (map[string]interface{}, bool) {

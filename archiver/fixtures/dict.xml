@@ -11,9 +11,9 @@
 			<key>$class</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>9</integer>
+				<integer>11</integer>
 			</dict>
-			<key>NS.objects</key>
+			<key>NS.keys</key>
 			<array>
 				<dict>
 					<key>CF$UID</key>
@@ -21,76 +21,76 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>5</integer>
+					<integer>3</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>4</integer>
 				</dict>
 			</array>
-		</dict>
-		<dict>
-			<key>$class</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>4</integer>
-			</dict>
 			<key>NS.objects</key>
 			<array>
 				<dict>
 					<key>CF$UID</key>
+					<integer>5</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
 					<integer>3</integer>
 				</dict>
-			</array>
-		</dict>
-		<true/>
-		<dict>
-			<key>$classes</key>
-			<array>
-				<string>NSSet</string>
-				<string>NSObject</string>
-			</array>
-			<key>$classname</key>
-			<string>NSSet</string>
-		</dict>
-		<dict>
-			<key>$class</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>8</integer>
-			</dict>
-			<key>NS.objects</key>
-			<array>
 				<dict>
 					<key>CF$UID</key>
 					<integer>6</integer>
 				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>3</integer>
-				</dict>
+			</array>
+		</dict>
+		<string>int</string>
+		<string>string</string>
+		<string>array</string>
+		<integer>1</integer>
+		<dict>
+			<key>$class</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>10</integer>
+			</dict>
+			<key>NS.objects</key>
+			<array>
 				<dict>
 					<key>CF$UID</key>
 					<integer>7</integer>
 				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>8</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>9</integer>
+				</dict>
 			</array>
 		</dict>
-		<integer>42</integer>
+		<true/>
 		<string>Hello, World!</string>
+		<integer>42</integer>
 		<dict>
 			<key>$classes</key>
 			<array>
-				<string>NSMutableSet</string>
-				<string>NSSet</string>
-				<string>NSObject</string>
-			</array>
-			<key>$classname</key>
-			<string>NSMutableSet</string>
-		</dict>
-		<dict>
-			<key>$classes</key>
-			<array>
+				<string>NSMutableArray</string>
 				<string>NSArray</string>
 				<string>NSObject</string>
 			</array>
 			<key>$classname</key>
-			<string>NSArray</string>
+			<string>NSMutableArray</string>
+		</dict>
+		<dict>
+			<key>$classes</key>
+			<array>
+				<string>NSDictionary</string>
+				<string>NSObject</string>
+			</array>
+			<key>$classname</key>
+			<string>NSDictionary</string>
 		</dict>
 	</array>
 	<key>$top</key>

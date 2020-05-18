@@ -19,7 +19,8 @@ func TestDecoder(t *testing.T) {
 		"test one value":       {"onevalue", "[true]"},
 		"test all primitives":  {"primitives", "[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42]"},
 		"test arrays and sets": {"arrays", "[[1,1,1,1.5,\"YXNkZmFzZGZhZHNmYWRzZg==\",true,\"Hello, World!\",\"Hello, World!\",\"Hello, World!\",false,false,42],[true,\"Hello, World!\",42],[true],[42,true,\"Hello, World!\"]]"},
-		"test nested arrays":   {"nestedarrays", "[[true],[42,true,\"Hello, World!\"]]"},
+		"test nested arrays":   {"nestedarrays", "[[[true],[42,true,\"Hello, World!\"]]]"},
+		"test dictionaries":    {"dict", "[{\"array\":[true,\"Hello, World!\",42],\"int\":1,\"string\":\"string\"}]"},
 	}
 
 	for _, tc := range testCases {
