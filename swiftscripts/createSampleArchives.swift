@@ -25,17 +25,16 @@ func createArchiveFiles(objects: NSArray, filename: String) {
 }
 
 let primitives: NSArray = [UInt64(1), UInt32(1), Double(1.0), 1.5, Data(base64Encoded: "YXNkZmFzZGZhZHNmYWRzZg==")!, true,
-                             "Hello, World!", "Hello, World!", "Hello, World!", false, false, 42]
+                           "Hello, World!", "Hello, World!", "Hello, World!", false, false, 42]
 let mutableArray: NSMutableArray = [true, "Hello, World!", 42]
 let mutableSet: NSMutableSet = [true, "Hello, World!", 42]
 let nsset: NSSet = [true]
 let nestedNsset: NSArray = [nsset, mutableSet]
 
-let dict: NSDictionary = ["int": 1, "string":"string", "array":mutableArray]
+let dict: NSDictionary = ["int": 1, "string": "string", "array": mutableArray]
 
 createArchiveFiles(objects: primitives, filename: "../archiver/fixtures/primitives")
 createArchiveFiles(objects: [primitives, mutableArray, nsset, mutableSet], filename: "../archiver/fixtures/arrays")
 createArchiveFiles(objects: [true], filename: "../archiver/fixtures/onevalue")
 createArchiveFiles(objects: [nestedNsset], filename: "../archiver/fixtures/nestedarrays")
 createArchiveFiles(objects: [dict], filename: "../archiver/fixtures/dict")
-
