@@ -1,6 +1,7 @@
 package nskeyedarchiver_test
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,6 +11,22 @@ import (
 	archiver "github.com/danielpaulus/nskeyedarchiver"
 	"github.com/stretchr/testify/assert"
 )
+
+//TestDecoderJson tests if real DTX nsKeyedArchived plists can be decoded without error
+func TestDecoderJson(t *testing.T) {
+	dat, err := ioutil.ReadFile("fixtures/payload_dump.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var payloads []string
+	json.Unmarshal([]byte(dat), &payloads)
+	for _, plistHex := range payloads {
+		plistBytes, _ := hex.DecodeString(plistHex)
+		_, err := archiver.Unarchive(plistBytes)
+		assert.NoError(t, err)
+	}
+}
 
 func TestDecoder(t *testing.T) {
 	testCases := map[string]struct {

@@ -28,6 +28,9 @@ func Unarchive(xml []byte) ([]interface{}, error) {
 
 func extractObjectsFromTop(top map[string]interface{}, objects []interface{}) ([]interface{}, error) {
 	objectCount := len(top)
+	if root, ok := top["root"]; ok {
+		return extractObjects([]plist.UID{root.(plist.UID)}, objects)
+	}
 	objectRefs := make([]plist.UID, objectCount)
 	//convert the Dictionary with the objectReferences into a flat list of UIDs, so we can reuse the extractObjects function later
 	for i := 0; i < objectCount; i++ {
