@@ -12,6 +12,59 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestArchiver3(t *testing.T) {
+	dat, err := ioutil.ReadFile("fixtures/payload_dump.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var payloads []string
+	json.Unmarshal([]byte(dat), &payloads)
+
+	plistBytes, _ := hex.DecodeString(payloads[0])
+	nska, err := archiver.Unarchive(plistBytes)
+	value := nska[0]
+	result, err := archiver.ArchiveBin(value)
+	/*if assert.NoError(t, err) {
+		output := convertToJSON(nska)
+		print(output)
+		assert.Equal(t, plistBytes, result)
+		assert.NoError(t, err)
+	}*/
+	nska2, err2 := archiver.Unarchive(result)
+	if assert.NoError(t, err2) {
+		assert.Equal(t, nska2, nska)
+	}
+
+}
+
+//TestDecoderJson tests if real DTX nsKeyedArchived plists can be decoded without error
+func TestArchiver(t *testing.T) {
+	dat, err := ioutil.ReadFile("fixtures/payload_dump.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var payloads []string
+	json.Unmarshal([]byte(dat), &payloads)
+	for _, plistHex := range payloads {
+		plistBytes, _ := hex.DecodeString(plistHex)
+		expectedNska, _ := archiver.Unarchive(plistBytes)
+
+		archivedNskaBin, err := archiver.ArchiveBin(expectedNska[0])
+		archivedNskaXml, err2 := archiver.ArchiveXML(expectedNska[0])
+
+		if assert.NoError(t, err) && assert.NoError(t, err2) {
+			actualNskaBin, unarchiverErrBin := archiver.Unarchive(archivedNskaBin)
+			actualNskaXml, unarchiverErrXml := archiver.Unarchive([]byte(archivedNskaXml))
+			if assert.NoError(t, unarchiverErrBin) && assert.NoError(t, unarchiverErrXml) {
+				assert.Equal(t, expectedNska, actualNskaBin)
+				assert.Equal(t, expectedNska, actualNskaXml)
+			}
+		}
+	}
+}
+
 //TestDecoderJson tests if real DTX nsKeyedArchived plists can be decoded without error
 func TestDecoderJson(t *testing.T) {
 	dat, err := ioutil.ReadFile("fixtures/payload_dump.json")
@@ -23,7 +76,9 @@ func TestDecoderJson(t *testing.T) {
 	json.Unmarshal([]byte(dat), &payloads)
 	for _, plistHex := range payloads {
 		plistBytes, _ := hex.DecodeString(plistHex)
-		_, err := archiver.Unarchive(plistBytes)
+		nska, err := archiver.Unarchive(plistBytes)
+		output := convertToJSON(nska)
+		print(output)
 		assert.NoError(t, err)
 	}
 }

@@ -34,11 +34,18 @@ func plistFromBytes(plistBytes []byte) (interface{}, error) {
 //ToPlist converts a given struct to a Plist using the
 //github.com/DHowett/go-plist library. Make sure your struct is exported.
 //It returns a string containing the plist.
-func ToPlist(data interface{}) string {
+func toPlist(data interface{}) (string, error) {
 	buf := &bytes.Buffer{}
 	encoder := plist.NewEncoder(buf)
-	encoder.Encode(data)
-	return buf.String()
+	err := encoder.Encode(data)
+	return buf.String(), err
+}
+
+func toBinaryPlist(data interface{}) ([]byte, error) {
+	buf := &bytes.Buffer{}
+	encoder := plist.NewBinaryEncoder(buf)
+	err := encoder.Encode(data)
+	return buf.Bytes(), err
 }
 
 //Print an object as JSON for debugging purposes, careful log.Fatals on error

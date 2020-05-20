@@ -11,6 +11,7 @@ const (
 	class           = "$class"
 	className       = "$classname"
 	versionValue    = 100000
+	null            = "$null"
 )
 
 const (
