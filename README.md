@@ -1,3 +1,5 @@
+# archived in favor of https://github.com/danielpaulus/go-ios which has a fully working DTX implementation and can run UI tests on linux
+
 # nskeyedarchiver
 A Golang based implementation of Swift/ObjectiveCs NSKeyedArchiver/NSKeyedUnarchiver
 
